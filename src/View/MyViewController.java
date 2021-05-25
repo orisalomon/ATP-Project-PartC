@@ -12,6 +12,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -68,7 +70,7 @@ public class MyViewController implements IView {
                         }
                     });
             client.communicateWithServer();
-            mazeDisplayer.drawMaze(maze.getMaze());
+            mazeDisplayer.drawMaze(maze);
             Solve.setDisable(false);
         } catch (UnknownHostException e) {
             e.printStackTrace(); // alert instead of print
@@ -78,6 +80,7 @@ public class MyViewController implements IView {
 
         return null;
     }
+
     public void solveMaze(ActionEvent actionEvent) {
         try {
             Client client = new Client(InetAddress.getLocalHost(), 5401, new
@@ -156,7 +159,7 @@ public class MyViewController implements IView {
                 ObjectInputStream inMaze = new ObjectInputStream(new FileInputStream(file.getAbsolutePath()));
                 maze = (Maze) inMaze.readObject();
                 inMaze.close();
-                mazeDisplayer.drawMaze(maze.getMaze());
+                mazeDisplayer.drawMaze(maze);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -256,5 +259,22 @@ public class MyViewController implements IView {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    public void keyPressed(KeyEvent keyEvent) {
+        int row = mazeDisplayer.getPlayerRow();
+        int col = mazeDisplayer.getPlayerCol();
+        switch (keyEvent.getCode()) {
+            case UP -> row -= 1;
+            case DOWN -> row += 1;
+            case LEFT -> col -= 1;
+            case RIGHT -> col += 1;
+        }
+        mazeDisplayer.setPlayerPosition(row,col);
+        keyEvent.consume();
+    }
+
+    public void getFocus(MouseEvent mouseEvent) {
+        mazeDisplayer.requestFocus();
     }
 }
