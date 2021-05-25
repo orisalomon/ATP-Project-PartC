@@ -137,6 +137,7 @@ public class MazeDisplayer extends Canvas {
 
             setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
 
+
             double cellHeight = canvasHeight/rows;
             double cellWidth = canvasWidth/cols;
 

@@ -6,8 +6,11 @@ import IO.MyDecompressorInputStream;
 import Server.Configurations;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,19 +24,62 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ResourceBundle;
 
 import static java.lang.System.exit;
 
-public class MyViewController implements IView {
+public class MyViewController implements IView, Initializable {
 
     public Button Solve;
+    public Label playerRow;
+    public Label playerCol;
+    public Label timer;
     private Maze maze;
     public int row= 50;
     public int col= 50;
     public MazeDisplayer mazeDisplayer;
     private Solution solution;
     private Configurations config = Configurations.getInstance();
+
+    StringProperty updatePlayerRow = new SimpleStringProperty();
+    StringProperty updatePlayerCol = new SimpleStringProperty();
+    StringProperty updateTimer = new SimpleStringProperty();
+
+    public String getUpdatePlayerRow() {
+        return updatePlayerRow.get();
+    }
+
+
+    public void setUpdatePlayerRow(int row) {
+        this.updatePlayerRow.set(""+row);
+    }
+
+    public String getUpdatePlayerCol() {
+        return updatePlayerCol.get();
+    }
+
+
+    public void setUpdatePlayerCol(int col) {
+        this.updatePlayerCol.set(""+col);
+    }
+
+    public String getUpdateTimer() {
+        return updateTimer.get();
+    }
+
+
+    public void setUpdateTimer(String time) {
+        this.updateTimer.set(time);
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        playerRow.textProperty().bind(updatePlayerRow);
+        playerCol.textProperty().bind(updatePlayerCol);
+        timer.textProperty().bind(updateTimer);
+    }
 
     public Maze generateMaze(ActionEvent actionEvent) {
 
@@ -271,10 +317,14 @@ public class MyViewController implements IView {
             case RIGHT -> col += 1;
         }
         mazeDisplayer.setPlayerPosition(row,col);
+        setUpdatePlayerRow(row);
+        setUpdatePlayerCol(col);
         keyEvent.consume();
     }
 
     public void getFocus(MouseEvent mouseEvent) {
         mazeDisplayer.requestFocus();
     }
+
+
 }
