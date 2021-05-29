@@ -1,9 +1,7 @@
 package View;
 
-import Client.Client;
-import Client.IClientStrategy;
-import IO.MyDecompressorInputStream;
 import Server.Configurations;
+import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,25 +21,28 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.ResourceBundle;
 
 import static java.lang.System.exit;
 
-public class MyViewController implements IView, Initializable {
+public class MyViewController implements IView, Initializable, Observer {
 
     public Button Solve;
     public Label playerRow;
     public Label playerCol;
     public Label timer;
     private Maze maze;
-    public int row= 50;
-    public int col= 50;
+    public int row= 20;
+    public int col= 20;
     public MazeDisplayer mazeDisplayer;
     private Solution solution;
     private Configurations config = Configurations.getInstance();
+    private MyViewModel viewModel;
+
+
 
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
@@ -51,7 +52,9 @@ public class MyViewController implements IView, Initializable {
         return updatePlayerRow.get();
     }
 
-
+    public void setViewModel(MyViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
     public void setUpdatePlayerRow(int row) {
         this.updatePlayerRow.set(""+row);
     }
@@ -81,75 +84,15 @@ public class MyViewController implements IView, Initializable {
         timer.textProperty().bind(updateTimer);
     }
 
-    public Maze generateMaze(ActionEvent actionEvent) {
+    public void generateMaze(ActionEvent actionEvent) {
 
-        /*
-        int rows = Integer.valueOf(textField_mazeRows.getText());  // get info from properties
-        int cols = Integer.valueOf(textField_mazeColumns.getText());
+        viewModel.GenerateMaze(row,col);
 
-         */
-        try{
-            Client client = new Client(InetAddress.getLocalHost(), 5400, new
-                    IClientStrategy() {
-                        @Override
-                        public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
-                            try {
-                                ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
-
-                                ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
-
-                                toServer.flush();
-                                int[] mazeDimensions = new int[]{row, col};
-                                toServer.writeObject(mazeDimensions); //send maze dimensions to server
-
-                                toServer.flush();
-                                byte[] compressedMaze = (byte[])fromServer.readObject(); //read generated maze (compressed with MyCompressor) from server
-
-                                InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
-                                byte[] decompressedMaze = new byte[mazeDimensions[0]*mazeDimensions[1]+24 /*CHANGE SIZE ACCORDING TO YOU MAZE SIZE*/]; //allocating byte[] for the decompressed maze - with bytes
-                                is.read(decompressedMaze); //Fill decompressedMaze
-
-                                maze = new Maze(decompressedMaze);
-                                //maze.print();
-                            } catch (Exception e) { e.printStackTrace();
-                            }
-                        }
-                    });
-            client.communicateWithServer();
-            mazeDisplayer.drawMaze(maze);
-            Solve.setDisable(false);
-        } catch (UnknownHostException e) {
-            e.printStackTrace(); // alert instead of print
-        }
-
-        //maze = new Client().communicateWithServer();
-
-        return null;
     }
 
     public void solveMaze(ActionEvent actionEvent) {
-        try {
-            Client client = new Client(InetAddress.getLocalHost(), 5401, new
-                    IClientStrategy() {
-                        @Override
-                        public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
-                            try {
-                                ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
+        viewModel.solveMaze(maze);
 
-                                ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
-
-                                toServer.writeObject(maze); //send maze to server
-                                toServer.flush();
-                                solution = (Solution) fromServer.readObject(); //read generated maze (compressed with MyCompressor) from server
-
-                            } catch (Exception e) { e.printStackTrace();
-                            }
-                        }
-                    });
-            client.communicateWithServer();
-            mazeDisplayer.drawSolution(solution);
-        } catch (UnknownHostException e) { e.printStackTrace();
-        }
     }
 
     public void saveMaze(ActionEvent actionEvent) {
@@ -183,7 +126,7 @@ public class MyViewController implements IView, Initializable {
     }
 
     public void exitMaze(ActionEvent actionEvent) {
-        Main.model.stop(); // TODO: every client have his own servers? can multiple clients run parallel?
+        viewModel.stop(); // TODO: every client have his own servers? can multiple clients run parallel?
         exit(0);
     }
 
@@ -280,6 +223,7 @@ public class MyViewController implements IView, Initializable {
         Button submit = new Button();
         submit.setText("Submit");
         Stage stage = new Stage();
+        stage.setTitle("Properties");
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -308,17 +252,7 @@ public class MyViewController implements IView, Initializable {
     }
 
     public void keyPressed(KeyEvent keyEvent) {
-        int row = mazeDisplayer.getPlayerRow();
-        int col = mazeDisplayer.getPlayerCol();
-        switch (keyEvent.getCode()) {
-            case UP -> row -= 1;
-            case DOWN -> row += 1;
-            case LEFT -> col -= 1;
-            case RIGHT -> col += 1;
-        }
-        mazeDisplayer.setPlayerPosition(row,col);
-        setUpdatePlayerRow(row);
-        setUpdatePlayerCol(col);
+        viewModel.updateMove(keyEvent);
         keyEvent.consume();
     }
 
@@ -327,4 +261,31 @@ public class MyViewController implements IView, Initializable {
     }
 
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof MyViewModel) {
+            switch ((String) arg) {
+                case "Generate" -> {
+                    maze = viewModel.getMaze();
+                    mazeDisplayer.drawMaze(maze);
+                    Solve.setDisable(false);
+                }
+                case "Solve" -> {
+                    solution = viewModel.getSolution();
+                    mazeDisplayer.drawSolution(solution);
+                }
+                case "Location" -> {
+
+                    // update player location (bind)
+                    setUpdatePlayerRow(viewModel.getRowChar());
+                    setUpdatePlayerCol(viewModel.getColChar());
+
+                    // update player location (real position)
+                    mazeDisplayer.setPlayerPosition(viewModel.getRowChar(), viewModel.getColChar());
+
+                }
+            }
+
+        }
+    }
 }

@@ -1,7 +1,21 @@
 package Model;
 
+import algorithms.mazeGenerators.Maze;
+import algorithms.search.Solution;
+
+import java.util.Observer;
+
 public interface IModel {
-    //Maze generateMaze(ActionEvent actionEvent);
+    Maze getMaze();
+    int getColChar();
+    int getRowChar();
+    Solution getSolution();
+    void generateMaze(int row, int col);
+    void updateLocation(int direction);
+    void solveMaze(Maze mazeToSolve);
+    void assignObserver(Observer o);
+    void start();
+    void stop();
 
 
 }
