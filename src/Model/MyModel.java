@@ -63,6 +63,11 @@ public class MyModel extends Observable implements IModel{
         return colMaze;
     }
 
+    @Override
+    public boolean checkFinish() {
+        return rowChar == maze.getGoalPosition().getRowIndex() && colChar == maze.getGoalPosition().getColumnIndex();
+    }
+
     public Solution getSolution() {
         return solution;
     }
@@ -144,9 +149,15 @@ public class MyModel extends Observable implements IModel{
         }
         if(changedLocation){
             setChanged();
-            notifyObservers("Location"); // finished update location
+            if(checkFinish()) {
+                notifyObservers("Finish");
+            }
+            else {
+                notifyObservers("Location"); // finished update location
+            }
         }
     }
+
 
     public void generateMaze(int row, int col) {
         try{

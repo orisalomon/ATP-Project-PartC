@@ -20,7 +20,7 @@ public class Main extends Application {
         fxmlLoader.setLocation(getClass().getResource("./MyView.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setTitle("Maze Game");
-        primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setScene(new Scene(root, 1000, 650));
         primaryStage.show();
 
         IModel model = new MyModel();

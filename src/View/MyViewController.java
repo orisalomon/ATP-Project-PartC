@@ -14,7 +14,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.SwipeEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -33,23 +36,25 @@ public class MyViewController implements IView, Initializable, Observer {
     public Label playerRow;
     public Label playerCol;
     public Label timer;
+    public Button music;
     private Maze maze;
     public int mazeRow;
     public int mazeCol;
     public MazeDisplayer mazeDisplayer;
     private Solution solution;
     private MyViewModel viewModel;
-
+    private Media media; // TODO: the file path should be in fxml ??
+    private MediaPlayer mediaPlayer;
 
 
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
     StringProperty updateTimer = new SimpleStringProperty();
 
+
     public String getUpdatePlayerRow() {
         return updatePlayerRow.get();
     }
-
     public void setViewModel(MyViewModel viewModel) {
         this.viewModel = viewModel;
     }
@@ -80,6 +85,11 @@ public class MyViewController implements IView, Initializable, Observer {
         playerRow.textProperty().bind(updatePlayerRow);
         playerCol.textProperty().bind(updatePlayerCol);
         timer.textProperty().bind(updateTimer);
+
+        media = new Media(new File("resources/music/gameMusic.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.play();
     }
 
     public void generateMaze(ActionEvent actionEvent) {
@@ -146,7 +156,8 @@ public class MyViewController implements IView, Initializable, Observer {
                 ObjectInputStream inMaze = new ObjectInputStream(new FileInputStream(file.getAbsolutePath()));
                 maze = (Maze) inMaze.readObject();
                 inMaze.close();
-                mazeDisplayer.drawMaze(maze);
+                mazeDisplayer.setMaze(maze);
+                mazeDisplayer.draw();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,7 +172,7 @@ public class MyViewController implements IView, Initializable, Observer {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Scene scene = new Scene(grid, 400, 400);
+        Scene scene = new Scene(grid, 450, 450);
 
         Text sceneTitle = new Text("Properties");
         grid.add(sceneTitle, 0, 0);
@@ -170,14 +181,14 @@ public class MyViewController implements IView, Initializable, Observer {
         grid.add(rows, 0, 1);
 
         TextField userRows = new TextField();
-        userRows.setText(String.valueOf(mazeRow));
+        userRows.setText(String.valueOf(viewModel.getRowMaze()));
         grid.add(userRows, 1, 1);
 
         Label Columns = new Label("Maze Columns:");
         grid.add(Columns, 0, 2);
 
         TextField userCols = new TextField();
-        userCols.setText(String.valueOf(mazeCol));
+        userCols.setText(String.valueOf(viewModel.getColMaze()));
         grid.add(userCols, 1, 2);
 
         Label generateAlgorithm = new Label("Maze generation algorithm:");
@@ -260,14 +271,14 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeDisplayer.setMaze(maze);
                     mazeDisplayer.setSolved(false);
                     mazeDisplayer.setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
-                    mazeDisplayer.drawMaze(maze);
+                    mazeDisplayer.draw();
                     Solve.setDisable(false);
                 }
                 case "Solve" -> {
                     solution = viewModel.getSolution();
                     mazeDisplayer.setSolved(true);
                     mazeDisplayer.setSolution(solution);
-                    mazeDisplayer.drawMaze(maze);
+                    mazeDisplayer.draw();
                 }
                 case "Location" -> {
 
@@ -290,10 +301,37 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeRow = viewModel.getRowMaze();
                     mazeCol = viewModel.getColMaze();
                 }
+                case "Finish" -> {
+                    mazeDisplayer.drawWin();
+                }
 
 
             }
 
+        }
+    }
+
+
+    public void turnOffMusic(SwipeEvent swipeEvent) {
+        mediaPlayer.stop();
+        music.setText("Turn On Music!");
+    }
+
+    public void turnOnMusic(SwipeEvent swipeEvent) {
+        
+    }
+
+    public void setMusic(ActionEvent actionEvent) {
+
+        switch (music.getText()){
+            case "Turn Off Music!":
+                mediaPlayer.pause();
+                music.setText("Turn On Music!");
+                break;
+            case "Turn On Music!":
+                mediaPlayer.play();
+                music.setText("Turn Off Music!");
+                break;
         }
     }
 }

@@ -21,5 +21,6 @@ public interface IModel {
     String getGenerateAlg();
     int getRowMaze();
     int getColMaze();
+    boolean checkFinish();
 
 }

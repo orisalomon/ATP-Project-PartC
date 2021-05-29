@@ -103,6 +103,10 @@ public class MyViewModel extends Observable implements Observer {
                     setChanged();
                     notifyObservers("SetConfig");
                 }
+                case "Finish" -> {
+                    setChanged();
+                    notifyObservers("Finish");
+                }
             }
 
         }

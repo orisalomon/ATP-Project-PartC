@@ -25,6 +25,7 @@ public class MazeDisplayer extends Canvas {
     StringProperty imageFileNameFinish = new SimpleStringProperty();
     StringProperty imageFileNameCharPath = new SimpleStringProperty();
     StringProperty imageFileNameSolution = new SimpleStringProperty();
+    StringProperty imageFileNameWin = new SimpleStringProperty();
 
     // members for Maze
     private int playerRow;
@@ -33,6 +34,15 @@ public class MazeDisplayer extends Canvas {
     private Solution solution;
     boolean solved = false;
     String sidePlayer = "front";
+
+    public String getImageFileNameWin() {
+        return imageFileNameWin.get();
+    }
+
+
+    public void setImageFileNameWin(String imageFileNameWin) {
+        this.imageFileNameWin.set(imageFileNameWin);
+    }
 
     public int getPlayerRow() {
         return playerRow;
@@ -44,13 +54,13 @@ public class MazeDisplayer extends Canvas {
 
     public void setPlayerPosition(int row,int col) {
         String side = "";
-        if(row<playerRow){side = "back";}
-        if(row>playerRow){side = "front";}
-        if(col>playerCol){side = "right";}
-        if(col<playerCol){side = "left";}
+        if(row<playerRow){sidePlayer = "back";}
+        if(row>playerRow){sidePlayer = "front";}
+        if(col>playerCol){sidePlayer = "right";}
+        if(col<playerCol){sidePlayer = "left";}
         this.playerRow = row;
         this.playerCol = col;
-        draw(side);
+        draw();
     }
 
     public void setSolved(boolean solved) {
@@ -131,7 +141,7 @@ public class MazeDisplayer extends Canvas {
     }
 
 
-    private void draw(String side) { // TODO: change (copy of code!)
+    public void draw() { // TODO: change (copy of code!)
         double canvasHeight = getHeight();
         double canvasWidth = getWidth();
         int rows = maze.getRows();
@@ -145,14 +155,15 @@ public class MazeDisplayer extends Canvas {
         graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
 
         drawFloorAndWalls(graphicsContext,rows,cols,cellHeight,cellWidth); // draw maze
-        drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
         if(solved){
             drawSolution(solution);
         }
-        drawPlayer(graphicsContext,cellHeight,cellWidth,side);
+        drawPlayer(graphicsContext,cellHeight,cellWidth,sidePlayer);
+        drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
 
     }
 
+    /*
     public void drawMaze(Maze maze) {
 
         if(maze != null){
@@ -170,15 +181,17 @@ public class MazeDisplayer extends Canvas {
             GraphicsContext graphicsContext = getGraphicsContext2D();
             // clear the canvas
             graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
-
             drawFloorAndWalls(graphicsContext,rows,cols,cellHeight,cellWidth); // draw maze
-            drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
             if(solved){
                 drawSolution(solution);
             }
             drawPlayer(graphicsContext,cellHeight,cellWidth,sidePlayer);
+            drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
+
         }
     }
+
+     */
 
     private void drawPlayer(GraphicsContext graphicsContext, double cellHeight, double cellWidth, String side) {
 
@@ -307,6 +320,23 @@ public class MazeDisplayer extends Canvas {
                 //graphicsContext.fillRect(y,x,cellWidth,cellHeight);
             }
         }
+    }
+
+    public void drawWin(){
+        Image winImage = null;
+        try {
+            winImage = new Image(new FileInputStream(getImageFileNameWin()));
+        } catch (FileNotFoundException e) {
+            System.out.println("No win image found!");
+        }
+
+        double canvasHeight = getHeight();
+        double canvasWidth = getWidth();
+        GraphicsContext graphicsContext = getGraphicsContext2D();
+        // clear the canvas
+        graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
+
+        graphicsContext.drawImage(winImage,0,0,canvasWidth,canvasHeight);
     }
 
 }
