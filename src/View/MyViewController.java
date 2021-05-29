@@ -1,6 +1,5 @@
 package View;
 
-import Server.Configurations;
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
@@ -35,11 +34,10 @@ public class MyViewController implements IView, Initializable, Observer {
     public Label playerCol;
     public Label timer;
     private Maze maze;
-    public int row= 20;
-    public int col= 20;
+    public int mazeRow;
+    public int mazeCol;
     public MazeDisplayer mazeDisplayer;
     private Solution solution;
-    private Configurations config = Configurations.getInstance();
     private MyViewModel viewModel;
 
 
@@ -85,14 +83,14 @@ public class MyViewController implements IView, Initializable, Observer {
     }
 
     public void generateMaze(ActionEvent actionEvent) {
-
-        viewModel.GenerateMaze(row,col);
+        mazeRow = viewModel.getRowMaze();
+        mazeCol = viewModel.getColMaze();
+        viewModel.GenerateMaze(mazeRow, mazeCol);
 
     }
 
     public void solveMaze(ActionEvent actionEvent) {
         viewModel.solveMaze(maze);
-
     }
 
     public void saveMaze(ActionEvent actionEvent) {
@@ -172,14 +170,14 @@ public class MyViewController implements IView, Initializable, Observer {
         grid.add(rows, 0, 1);
 
         TextField userRows = new TextField();
-        userRows.setText(String.valueOf(row));
+        userRows.setText(String.valueOf(mazeRow));
         grid.add(userRows, 1, 1);
 
         Label Columns = new Label("Maze Columns:");
         grid.add(Columns, 0, 2);
 
         TextField userCols = new TextField();
-        userCols.setText(String.valueOf(col));
+        userCols.setText(String.valueOf(mazeCol));
         grid.add(userCols, 1, 2);
 
         Label generateAlgorithm = new Label("Maze generation algorithm:");
@@ -192,7 +190,7 @@ public class MyViewController implements IView, Initializable, Observer {
         String currGen = "";
 
         try{
-            currGen = config.getGenAlgorithm();
+            currGen = viewModel.getGenAlg();
 
         } catch (Exception ignored) {
         }
@@ -211,7 +209,7 @@ public class MyViewController implements IView, Initializable, Observer {
 
         String currSolver = "";
         try{
-            currSolver = config.getSolverAlgorithm();
+            currSolver = viewModel.getSolverAlg();
         } catch (Exception e) {
         }
 
@@ -229,16 +227,8 @@ public class MyViewController implements IView, Initializable, Observer {
             public void handle(ActionEvent e) {
                 try {
                     int userRowsInt = Integer.parseInt(userRows.getText());
-                    if (userRowsInt <= 0){new Alert(Alert.AlertType.ERROR,"Rows must be positive integer!").show();}
-
                     int userColsInt = Integer.parseInt(userCols.getText());
-                    if (userColsInt <= 0){new Alert(Alert.AlertType.ERROR,"Columns must be positive integer!").show();}
-
-                    row = userRowsInt;
-                    col = userColsInt;
-                    config.setGenAlgorithm(comboGenerate.getValue());
-                    config.setSolverAlgorithm(comboSolver.getValue());
-
+                    viewModel.updateConfig(userRowsInt,userColsInt,comboGenerate.getValue(),comboSolver.getValue());
                     stage.close();
                 } catch (Exception ex) {
                     new Alert(Alert.AlertType.ERROR,"Rows and Cols must be positive integer!").show();
@@ -267,12 +257,17 @@ public class MyViewController implements IView, Initializable, Observer {
             switch ((String) arg) {
                 case "Generate" -> {
                     maze = viewModel.getMaze();
+                    mazeDisplayer.setMaze(maze);
+                    mazeDisplayer.setSolved(false);
+                    mazeDisplayer.setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
                     mazeDisplayer.drawMaze(maze);
                     Solve.setDisable(false);
                 }
                 case "Solve" -> {
                     solution = viewModel.getSolution();
-                    mazeDisplayer.drawSolution(solution);
+                    mazeDisplayer.setSolved(true);
+                    mazeDisplayer.setSolution(solution);
+                    mazeDisplayer.drawMaze(maze);
                 }
                 case "Location" -> {
 
@@ -284,6 +279,19 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeDisplayer.setPlayerPosition(viewModel.getRowChar(), viewModel.getColChar());
 
                 }
+
+                case "ErrorConfig" -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR,"Rows and cols must be greater than 2!");
+                    alert.setTitle("Error");
+                    alert.show();
+                }
+
+                case "SetConfig" -> {
+                    mazeRow = viewModel.getRowMaze();
+                    mazeCol = viewModel.getColMaze();
+                }
+
+
             }
 
         }

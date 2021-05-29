@@ -14,6 +14,10 @@ public class MyViewModel extends Observable implements Observer {
     int rowChar;
     int colChar;
     Maze maze;
+    int rowMaze;
+    int colMaze;
+    String genAlg;
+    String solverAlg;
     Solution solution;
 
 
@@ -24,6 +28,30 @@ public class MyViewModel extends Observable implements Observer {
         rowChar = 0;
         colChar = 0;
         solution = null;
+
+        // get data from model + initial data
+        rowMaze=model.getRowMaze();
+        colMaze=model.getColMaze();
+        genAlg = model.getGenerateAlg();
+        solverAlg = model.getSolverAlg();
+
+
+    }
+
+    public int getRowMaze() {
+        return rowMaze;
+    }
+
+    public int getColMaze() {
+        return colMaze;
+    }
+
+    public String getGenAlg() {
+        return genAlg;
+    }
+
+    public String getSolverAlg() {
+        return solverAlg;
     }
 
     public int getRowChar() {
@@ -63,6 +91,18 @@ public class MyViewModel extends Observable implements Observer {
                     setChanged();
                     notifyObservers("Location");
                 }
+                case "ErrorConfig" -> {
+                    setChanged();
+                    notifyObservers("ErrorConfig");
+                }
+                case "SetConfig" -> {
+                    rowMaze = model.getRowMaze();
+                    colMaze = model.getColMaze();
+                    genAlg = model.getGenerateAlg();
+                    solverAlg = model.getSolverAlg();
+                    setChanged();
+                    notifyObservers("SetConfig");
+                }
             }
 
         }
@@ -94,5 +134,9 @@ public class MyViewModel extends Observable implements Observer {
 
     public void start() {
         model.start();
+    }
+
+    public void updateConfig(int rows, int cols, String generateAlg, String solverAlg) {
+        model.updateConfig(rows,cols,generateAlg,solverAlg);
     }
 }
