@@ -114,11 +114,14 @@ public class MyViewController implements IView, Initializable, Observer {
             FileChooser fileChooser = new FileChooser();
             Stage stage = new Stage();
             fileChooser.setTitle("Save Maze");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Maze files", "*.maze")
+            );
             File file = fileChooser.showSaveDialog(stage);
             ObjectOutputStream out;
             if (file != null) {
                 try {
-                    out = new ObjectOutputStream(new FileOutputStream(file.getAbsolutePath()+".maze"));
+                    out = new ObjectOutputStream(new FileOutputStream(file.getAbsolutePath()));
                     out.writeObject(maze);
                     out.flush();
                     out.close();
@@ -146,7 +149,7 @@ public class MyViewController implements IView, Initializable, Observer {
                 new File(System.getProperty("user.home"))
         );
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Mazes", "*.maze")
+                new FileChooser.ExtensionFilter("Maze files", "*.maze")
         );
 
         File file = fileChooser.showOpenDialog(stage);
