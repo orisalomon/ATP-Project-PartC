@@ -6,10 +6,14 @@ import algorithms.search.MazeState;
 import algorithms.search.Solution;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -322,14 +326,9 @@ public class MazeDisplayer extends Canvas {
         }
     }
 
-    public void drawWin(){
-        Image winImage = null;
-        try {
-            winImage = new Image(new FileInputStream(getImageFileNameWin()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No win image found!");
-        }
+    public void drawWin(Stage stage){
 
+        /*
         double canvasHeight = getHeight();
         double canvasWidth = getWidth();
         GraphicsContext graphicsContext = getGraphicsContext2D();
@@ -337,6 +336,43 @@ public class MazeDisplayer extends Canvas {
         graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
 
         graphicsContext.drawImage(winImage,0,0,canvasWidth,canvasHeight);
+
+        */
+
+        //Creating an image
+        Image winImage = null;
+        try {
+            winImage = new Image(new FileInputStream(getImageFileNameWin()));
+        } catch (FileNotFoundException e) {
+            System.out.println("No win image found!");
+        }
+
+        //Setting the image view
+        ImageView imageView = new ImageView(winImage);
+
+        //Setting the position of the image
+//        imageView.setX(50);
+//        imageView.setY(25);
+
+        //setting the fit height and width of the image view
+//        imageView.setFitHeight(500);
+//        imageView.setFitWidth(600);
+
+        //Setting the preserve ratio of the image view
+        imageView.setPreserveRatio(true);
+
+        //Creating a Group object
+        Group root = new Group(imageView);
+
+        //Creating a scene object
+        Scene scene = new Scene(root, 500, 700);
+
+        //Adding scene to the stage
+        stage.setScene(scene);
+
+        //Displaying the contents of the stage
+        stage.show();
+
     }
 
 }

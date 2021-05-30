@@ -14,12 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.SwipeEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -89,6 +89,7 @@ public class MyViewController implements IView, Initializable, Observer {
         media = new Media(new File("resources/music/gameMusic.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setVolume(0.2);
         mediaPlayer.play();
     }
 
@@ -305,7 +306,27 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeCol = viewModel.getColMaze();
                 }
                 case "Finish" -> {
-                    mazeDisplayer.drawWin();
+                    Media winMedia = new Media(new File("resources/music/winSong.mp3").toURI().toString());
+                    MediaPlayer mediaPlayerWin = new MediaPlayer(winMedia);
+                    mediaPlayer.pause(); // stop current music
+                    mediaPlayerWin.setAutoPlay(true);
+                    mediaPlayerWin.setVolume(1.25);
+                    mediaPlayerWin.play(); // play win song
+
+                    Stage stage = new Stage();
+                    stage.initModality(Modality.APPLICATION_MODAL);
+
+                    //Setting title to the Stage
+                    stage.setTitle("Winner!");
+
+                    mazeDisplayer.drawWin(stage);
+
+                    stage.setOnCloseRequest(e -> {
+                        mediaPlayerWin.stop();
+                        mediaPlayer.play();
+                    });
+
+
                 }
 
 
@@ -314,15 +335,6 @@ public class MyViewController implements IView, Initializable, Observer {
         }
     }
 
-
-    public void turnOffMusic(SwipeEvent swipeEvent) {
-        mediaPlayer.stop();
-        music.setText("Turn On Music!");
-    }
-
-    public void turnOnMusic(SwipeEvent swipeEvent) {
-        
-    }
 
     public void setMusic(ActionEvent actionEvent) {
 

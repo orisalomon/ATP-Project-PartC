@@ -11,7 +11,10 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-
+    /*
+    int screenWidth = (int) Screen.getPrimary().getBounds().getWidth();
+    int screenHeight = (int) Screen.getPrimary().getBounds().getHeight();
+    */
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -19,6 +22,21 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("./MyView.fxml"));
         Parent root = fxmlLoader.load();
+        /*
+        // Responsive Design
+        int sceneWidth = 0;
+        int sceneHeight = 0;
+        if (screenWidth <= 800 && screenHeight <= 600) {
+            sceneWidth = 600;
+            sceneHeight = 350;
+        } else if (screenWidth <= 1280 && screenHeight <= 768) {
+            sceneWidth = 800;
+            sceneHeight = 450;
+        } else if (screenWidth <= 1920 && screenHeight <= 1080) {
+            sceneWidth = 1000;
+            sceneHeight = 650;
+        }
+        */
         primaryStage.setTitle("Maze Game");
         primaryStage.setScene(new Scene(root, 1000, 650));
         primaryStage.show();
