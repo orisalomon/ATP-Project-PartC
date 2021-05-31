@@ -6,14 +6,11 @@ import algorithms.search.MazeState;
 import algorithms.search.Solution;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +27,7 @@ public class MazeDisplayer extends Canvas {
     StringProperty imageFileNameCharPath = new SimpleStringProperty();
     StringProperty imageFileNameSolution = new SimpleStringProperty();
     StringProperty imageFileNameWin = new SimpleStringProperty();
+    // imageFileNameWin="resources/images/win.jpg"  onMouseClicked="#getFocus"
 
     // members for Maze
     private int playerRow;
@@ -38,6 +36,32 @@ public class MazeDisplayer extends Canvas {
     private Solution solution;
     boolean solved = false;
     String sidePlayer = "front";
+
+
+
+    public MazeDisplayer() {
+//        setHeight(this.getParent().getLayoutBounds().getHeight());
+//        setWidth(this.getParent().getLayoutBounds().getWidth());
+        widthProperty().addListener(evt -> draw());
+        heightProperty().addListener(evt -> draw());
+    }
+
+
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
+    @Override
+    public double prefWidth(double height) {
+        return getWidth();
+    }
+
+    @Override
+    public double prefHeight(double width) {
+        return getHeight();
+    }
+
 
     public String getImageFileNameWin() {
         return imageFileNameWin.get();
@@ -146,56 +170,29 @@ public class MazeDisplayer extends Canvas {
 
 
     public void draw() {
-        double canvasHeight = getHeight();
-        double canvasWidth = getWidth();
-        int rows = maze.getRows();
-        int cols = maze.getCols();
-
-        double cellHeight = canvasHeight/rows;
-        double cellWidth = canvasWidth/cols;
-
-        GraphicsContext graphicsContext = getGraphicsContext2D();
-        // clear the canvas
-        graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
-
-        drawFloorAndWalls(graphicsContext,rows,cols,cellHeight,cellWidth); // draw maze
-        if(solved){
-            drawSolution(solution);
-        }
-        drawPlayer(graphicsContext,cellHeight,cellWidth,sidePlayer);
-        drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
-
-    }
-
-    /*
-    public void drawMaze(Maze maze) {
-
-        if(maze != null){
+        if (maze != null) {
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Canvas Height: "+canvasHeight+ " , Canvas Width: "+ canvasWidth);
+            alert.show();
             int rows = maze.getRows();
             int cols = maze.getCols();
 
-            //setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
-
-
-            double cellHeight = canvasHeight/rows;
-            double cellWidth = canvasWidth/cols;
+            double cellHeight = canvasHeight / rows;
+            double cellWidth = canvasWidth / cols;
 
             GraphicsContext graphicsContext = getGraphicsContext2D();
             // clear the canvas
-            graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
-            drawFloorAndWalls(graphicsContext,rows,cols,cellHeight,cellWidth); // draw maze
-            if(solved){
+            graphicsContext.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            drawFloorAndWalls(graphicsContext, rows, cols, cellHeight, cellWidth); // draw maze
+            if (solved) {
                 drawSolution(solution);
             }
-            drawPlayer(graphicsContext,cellHeight,cellWidth,sidePlayer);
-            drawFinish(graphicsContext,rows,cols,cellHeight,cellWidth);  // draw finish line
-
+            drawPlayer(graphicsContext, cellHeight, cellWidth, sidePlayer);
+            drawFinish(graphicsContext,cellHeight, cellWidth);  // draw finish line
         }
     }
-
-     */
 
     private void drawPlayer(GraphicsContext graphicsContext, double cellHeight, double cellWidth, String side) {
 
@@ -215,8 +212,8 @@ public class MazeDisplayer extends Canvas {
             System.out.println("No player image found!");
         }
 
-        double x = getPlayerCol()*cellWidth;
-        double y = getPlayerRow()*cellHeight;
+        double x = getPlayerCol()*cellHeight;
+        double y = getPlayerRow()*cellWidth;
 
         if(playerImage == null){
             graphicsContext.setFill(Color.GREEN);
@@ -225,11 +222,9 @@ public class MazeDisplayer extends Canvas {
         else{
             graphicsContext.drawImage(playerImage,x,y,cellHeight,cellWidth);
         }
-
-
     }
 
-    private void drawFinish(GraphicsContext graphicsContext, int rows, int cols, double cellHeight, double cellWidth) {
+    private void drawFinish(GraphicsContext graphicsContext, double cellHeight, double cellWidth) {
         Image finishImage = null;
         try {
             finishImage = new Image(new FileInputStream(getImageFileNameFinish()));
@@ -324,55 +319,6 @@ public class MazeDisplayer extends Canvas {
                 //graphicsContext.fillRect(y,x,cellWidth,cellHeight);
             }
         }
-    }
-
-    public void drawWin(Stage stage){
-
-        /*
-        double canvasHeight = getHeight();
-        double canvasWidth = getWidth();
-        GraphicsContext graphicsContext = getGraphicsContext2D();
-        // clear the canvas
-        graphicsContext.clearRect(0,0,canvasWidth,canvasHeight);
-
-        graphicsContext.drawImage(winImage,0,0,canvasWidth,canvasHeight);
-
-        */
-
-        //Creating an image
-        Image winImage = null;
-        try {
-            winImage = new Image(new FileInputStream(getImageFileNameWin()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No win image found!");
-        }
-
-        //Setting the image view
-        ImageView imageView = new ImageView(winImage);
-
-        //Setting the position of the image
-//        imageView.setX(50);
-//        imageView.setY(25);
-
-        //setting the fit height and width of the image view
-//        imageView.setFitHeight(500);
-//        imageView.setFitWidth(600);
-
-        //Setting the preserve ratio of the image view
-        imageView.setPreserveRatio(true);
-
-        //Creating a Group object
-        Group root = new Group(imageView);
-
-        //Creating a scene object
-        Scene scene = new Scene(root, 500, 700);
-
-        //Adding scene to the stage
-        stage.setScene(scene);
-
-        //Displaying the contents of the stage
-        stage.show();
-
     }
 
 }

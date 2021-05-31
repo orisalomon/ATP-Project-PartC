@@ -20,6 +20,7 @@ public class MyModel extends Observable implements IModel{
 
     static public Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
     static public Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
+
     private Configurations config = Configurations.getInstance();
     Maze maze;
     int rowMaze;
@@ -122,30 +123,66 @@ public class MyModel extends Observable implements IModel{
                     changedLocation = true;
                 }
             }
+            // UP RIGHT
+            case 2 -> {
+                if(rowChar>0 && colChar<colMaze-1 && maze.getMaze()[rowChar-1][colChar+1] == 0 && (maze.getMaze()[rowChar][colChar+1] == 0 || maze.getMaze()[rowChar-1][colChar] == 0)){
+                    rowChar--;
+                    colChar++;
+                    changedLocation = true;
+                }
+            }
+
+            // Right
+            case 3 -> {
+                if(colChar< colMaze-1 && maze.getMaze()[rowChar][colChar+1] == 0) {
+                    colChar++;
+                    changedLocation = true;
+                }
+            }
+
+            // DOWN RIGHT
+            case 4 -> {
+                if(rowChar< rowMaze-1 && colChar<colMaze-1 && maze.getMaze()[rowChar+1][colChar+1] == 0 && (maze.getMaze()[rowChar][colChar+1] == 0 || maze.getMaze()[rowChar+1][colChar] == 0)){
+                    rowChar++;
+                    colChar++;
+                    changedLocation = true;
+                }
+            }
 
             // Down
-            case 2 -> {
+            case 5 -> {
                 if(rowChar<rowMaze-1 && maze.getMaze()[rowChar+1][colChar] == 0) {
                     rowChar++;
                     changedLocation = true;
                 }
             }
 
+            // DOWN LEFT
+            case 6 -> {
+                if(rowChar< rowMaze-1 && colChar>0 && maze.getMaze()[rowChar+1][colChar-1] == 0 && (maze.getMaze()[rowChar][colChar-1] == 0 || maze.getMaze()[rowChar+1][colChar] == 0)){
+                    rowChar++;
+                    colChar--;
+                    changedLocation = true;
+                }
+            }
+
             // Left
-            case 3 -> {
+            case 7 -> {
                 if(colChar>0 && maze.getMaze()[rowChar][colChar-1] == 0) {
                     colChar--;
                     changedLocation = true;
                 }
             }
 
-            // Right
-            case 4 -> {
-                if(colChar< colMaze-1 && maze.getMaze()[rowChar][colChar+1] == 0) {
-                    colChar++;
+            // UP LEFT
+            case 8 -> {
+                if(rowChar>0 && colChar>0 && maze.getMaze()[rowChar-1][colChar-1] == 0 && (maze.getMaze()[rowChar][colChar-1] == 0 || maze.getMaze()[rowChar-1][colChar] == 0)){
+                    rowChar--;
+                    colChar--;
                     changedLocation = true;
                 }
             }
+
         }
         if(changedLocation){
             setChanged();

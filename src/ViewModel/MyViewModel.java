@@ -77,6 +77,8 @@ public class MyViewModel extends Observable implements Observer {
             switch ((String) arg) {
                 case "Generate" -> {
                     maze = model.getMaze();
+                    rowChar = model.getRowChar();
+                    colChar = model.getColChar();
                     setChanged();
                     notifyObservers("Generate");
                 }
@@ -119,10 +121,14 @@ public class MyViewModel extends Observable implements Observer {
     public void updateMove(KeyEvent keyEvent){
         int direction = -1;
         switch (keyEvent.getCode()) {
-            case UP -> direction=1;
-            case DOWN -> direction=2;
-            case LEFT -> direction=3;
-            case RIGHT -> direction=4;
+            case NUMPAD8 -> direction=1; // UP
+            case NUMPAD9 -> direction=2; // UP RIGHT
+            case NUMPAD6 -> direction=3; // RIGHT
+            case NUMPAD3 -> direction=4; // DOWN RIGHT
+            case NUMPAD2 -> direction=5; // DOWN
+            case NUMPAD1 -> direction=6; // DOWN LEFT
+            case NUMPAD4 -> direction=7; // LEFT
+            case NUMPAD7 -> direction=8; // UP LEFT
         }
         model.updateLocation(direction);
     }

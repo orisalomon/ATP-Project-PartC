@@ -10,11 +10,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
@@ -35,8 +38,8 @@ public class MyViewController implements IView, Initializable, Observer {
     public Button Solve;
     public Label playerRow;
     public Label playerCol;
-    public Label timer;
     public Button music;
+    public Pane mazePane;
     private Maze maze;
     public int mazeRow;
     public int mazeCol;
@@ -49,7 +52,8 @@ public class MyViewController implements IView, Initializable, Observer {
 
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
-    StringProperty updateTimer = new SimpleStringProperty();
+    StringProperty imageFileNameWin = new SimpleStringProperty();
+
 
 
     public String getUpdatePlayerRow() {
@@ -61,30 +65,22 @@ public class MyViewController implements IView, Initializable, Observer {
     public void setUpdatePlayerRow(int row) {
         this.updatePlayerRow.set(""+row);
     }
-
     public String getUpdatePlayerCol() {
         return updatePlayerCol.get();
     }
-
-
     public void setUpdatePlayerCol(int col) {
         this.updatePlayerCol.set(""+col);
     }
 
-    public String getUpdateTimer() {
-        return updateTimer.get();
-    }
-
-
-    public void setUpdateTimer(String time) {
-        this.updateTimer.set(time);
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         playerRow.textProperty().bind(updatePlayerRow);
         playerCol.textProperty().bind(updatePlayerCol);
-        timer.textProperty().bind(updateTimer);
+
+
+        mazeDisplayer.widthProperty().bind(mazePane.widthProperty()); // for resizeable maze
+        mazeDisplayer.heightProperty().bind(mazePane.heightProperty());
 
         media = new Media(new File("resources/music/gameMusic.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
@@ -260,10 +256,12 @@ public class MyViewController implements IView, Initializable, Observer {
         viewModel.updateMove(keyEvent);
         keyEvent.consume();
     }
-
-    public void getFocus(MouseEvent mouseEvent) {
+/*
+   public void getFocus(MouseEvent mouseEvent) {
         mazeDisplayer.requestFocus();
     }
+
+ */
 
 
     @Override
@@ -275,8 +273,16 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeDisplayer.setMaze(maze);
                     mazeDisplayer.setSolved(false);
                     mazeDisplayer.setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
-                    mazeDisplayer.draw();
                     Solve.setDisable(false);
+
+                    // request focus for the game
+                    mazeDisplayer.requestFocus();
+
+                    // update player location (bind)
+                    setUpdatePlayerRow(viewModel.getRowChar());
+                    setUpdatePlayerCol(viewModel.getColChar());
+                    mazeDisplayer.draw();
+
                 }
                 case "Solve" -> {
                     solution = viewModel.getSolution();
@@ -306,26 +312,7 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeCol = viewModel.getColMaze();
                 }
                 case "Finish" -> {
-                    Media winMedia = new Media(new File("resources/music/winSong.mp3").toURI().toString());
-                    MediaPlayer mediaPlayerWin = new MediaPlayer(winMedia);
-                    mediaPlayer.pause(); // stop current music
-                    mediaPlayerWin.setAutoPlay(true);
-                    mediaPlayerWin.setVolume(1.25);
-                    mediaPlayerWin.play(); // play win song
-
-                    Stage stage = new Stage();
-                    stage.initModality(Modality.APPLICATION_MODAL);
-
-                    //Setting title to the Stage
-                    stage.setTitle("Winner!");
-
-                    mazeDisplayer.drawWin(stage);
-
-                    stage.setOnCloseRequest(e -> {
-                        mediaPlayerWin.stop();
-                        mediaPlayer.play();
-                    });
-
+                    drawWin();  // draw new stage with win image
 
                 }
 
@@ -335,6 +322,97 @@ public class MyViewController implements IView, Initializable, Observer {
         }
     }
 
+    public void drawWin(){
+
+        // change music
+        Media winMedia = new Media(new File("resources/music/winSong.mp3").toURI().toString());
+        MediaPlayer mediaPlayerWin = new MediaPlayer(winMedia);
+        mediaPlayer.pause(); // stop current music
+        mediaPlayerWin.setAutoPlay(true);
+        mediaPlayerWin.setVolume(1.25);
+        mediaPlayerWin.play(); // play win song
+
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        //Setting title to the Stage
+        stage.setTitle("Winner!");
+
+        stage.setOnCloseRequest(e -> {
+            // disable option to quit the window
+            e.consume();
+
+        });
+
+        //Creating an image
+        Image winImage = null;
+        try {
+            winImage = new Image(new FileInputStream(mazeDisplayer.getImageFileNameWin()));
+        } catch (FileNotFoundException e) {
+            System.out.println("No win image found!");
+        }
+
+        //Setting the image view
+        ImageView imageView = new ImageView(winImage);
+
+        //Setting the position of the image
+//        imageView.setX(50);
+//        imageView.setY(25);
+
+        //setting the fit height and width of the image view
+//        imageView.setFitHeight(500);
+//        imageView.setFitWidth(600);
+
+        //Setting the preserve ratio of the image view
+        imageView.setPreserveRatio(true);
+
+        //Creating a Group object
+        Group root = new Group(imageView);
+
+
+        Button playAgain = new Button();
+        playAgain.setText("Play Again");
+        playAgain.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                try {
+                    // set background music
+                    mediaPlayerWin.stop();
+                    mediaPlayer.play();
+                    generateMaze(e);
+                    stage.close();
+                } catch (Exception ex) {
+                    new Alert(Alert.AlertType.ERROR,"Rows and Cols must be positive integer!").show();
+                }
+            }});
+
+        //root.getChildren().add(playAgain); // add button to win scene
+
+        Button quit = new Button();
+        quit.setText("Quit game");
+        quit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) { exitMaze(e);}}
+        );
+
+        // set buttons inside the grid.
+        GridPane grid = new GridPane();
+        grid.add(playAgain,0,0);
+        grid.add(quit,0,1);
+        root.getChildren().add(grid); // add button to win scene
+
+
+        //Creating a scene object
+        Scene scene = new Scene(root, 500, 700);
+
+        //Adding scene to the stage
+        stage.setScene(scene);
+
+        //Displaying the contents of the stage
+        stage.show();
+
+    }
 
     public void setMusic(ActionEvent actionEvent) {
 
