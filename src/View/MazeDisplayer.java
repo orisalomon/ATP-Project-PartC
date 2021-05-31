@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -173,8 +172,7 @@ public class MazeDisplayer extends Canvas {
         if (maze != null) {
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION,"Canvas Height: "+canvasHeight+ " , Canvas Width: "+ canvasWidth);
-            alert.show();
+
             int rows = maze.getRows();
             int cols = maze.getCols();
 
