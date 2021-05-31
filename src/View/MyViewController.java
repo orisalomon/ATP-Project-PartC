@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -40,6 +41,7 @@ public class MyViewController implements IView, Initializable, Observer {
     public Label playerCol;
     public Button music;
     public Pane mazePane;
+    public ToggleButton volume;
     private Maze maze;
     public int mazeRow;
     public int mazeCol;
@@ -52,8 +54,6 @@ public class MyViewController implements IView, Initializable, Observer {
 
     StringProperty updatePlayerRow = new SimpleStringProperty();
     StringProperty updatePlayerCol = new SimpleStringProperty();
-    StringProperty imageFileNameWin = new SimpleStringProperty();
-
 
 
     public String getUpdatePlayerRow() {
@@ -71,7 +71,6 @@ public class MyViewController implements IView, Initializable, Observer {
     public void setUpdatePlayerCol(int col) {
         this.updatePlayerCol.set(""+col);
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -256,12 +255,11 @@ public class MyViewController implements IView, Initializable, Observer {
         viewModel.updateMove(keyEvent);
         keyEvent.consume();
     }
-/*
+
    public void getFocus(MouseEvent mouseEvent) {
         mazeDisplayer.requestFocus();
     }
 
- */
 
 
     @Override
@@ -289,6 +287,7 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeDisplayer.setSolved(true);
                     mazeDisplayer.setSolution(solution);
                     mazeDisplayer.draw();
+                    mazeDisplayer.requestFocus();
                 }
                 case "Location" -> {
 
@@ -415,7 +414,6 @@ public class MyViewController implements IView, Initializable, Observer {
     }
 
     public void setMusic(ActionEvent actionEvent) {
-
         switch (music.getText()){
             case "Turn Off Music!":
                 mediaPlayer.pause();
@@ -426,5 +424,6 @@ public class MyViewController implements IView, Initializable, Observer {
                 music.setText("Turn Off Music!");
                 break;
         }
+        mazeDisplayer.requestFocus();
     }
 }
