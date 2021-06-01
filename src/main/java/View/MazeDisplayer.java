@@ -315,4 +315,18 @@ public class MazeDisplayer extends Canvas {
         }
     }
 
+    public void setPlayerPositionMouse(double y, double x) {
+        double canvasHeight = getHeight(); // canvasHeight
+        double canvasWidth = getWidth();// canvasWidth
+
+        int rows = maze.getRows();
+        int cols = maze.getCols();
+
+        double cellHeight = canvasHeight / rows;
+        double cellWidth = canvasWidth / cols;   // totalWidth = 80, col =8 => cellWidth= 10 , x=12 -> 12/10 = 1.2\
+
+        setPlayerPosition((int)(y/cellWidth),(int)(x/cellHeight));
+
+
+    }
 }

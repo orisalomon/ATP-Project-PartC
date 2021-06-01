@@ -15,13 +15,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -50,6 +53,7 @@ public class MyViewController implements IView, Initializable, Observer {
     private MyViewModel viewModel;
     private Media media; // TODO: the file path should be in fxml ??
     private MediaPlayer mediaPlayer;
+
 
 
     StringProperty updatePlayerRow = new SimpleStringProperty();
@@ -86,6 +90,29 @@ public class MyViewController implements IView, Initializable, Observer {
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setVolume(0.2);
         mediaPlayer.play();
+
+    }
+
+    public void mouseScrolled(ScrollEvent scrollEvent) {
+        if(scrollEvent.isControlDown()) {
+            double zoomFactor = 1.5;
+            if (scrollEvent.getDeltaY() <= 0) {
+                // zoom out
+                zoomFactor = 1 / zoomFactor;
+            }
+
+            zoomIn(mazeDisplayer, zoomFactor);
+        }
+    }
+
+    public void zoomIn(MazeDisplayer pane, double factor){
+        Scale newScale = new Scale();
+        newScale.setX(pane.getScaleX() * factor);
+        newScale.setY(pane.getScaleY() * factor);
+        newScale.setPivotX(pane.getScaleX());
+        newScale.setPivotY(pane.getScaleY());
+        pane.getTransforms().add(newScale);
+
     }
 
     public void generateMaze(ActionEvent actionEvent) {
@@ -426,4 +453,38 @@ public class MyViewController implements IView, Initializable, Observer {
         }
         mazeDisplayer.requestFocus();
     }
+
+    public void mouseDragged(MouseEvent mouseEvent) {
+        /*
+        // get relative x and y of the mazeDisplayer
+        double x = mouseEvent.getX();
+        double y = mouseEvent.getY();
+
+        System.out.println("x: "+x);
+        System.out.println("y: "+y);
+        mazeDisplayer.setPlayerPositionMouse(y,x);
+
+        */
+
+        double mouseX =(int) ((mouseEvent.getX()) / mazeDisplayer.getWidth());
+        double mouseY =(int) ((mouseEvent.getY()) / mazeDisplayer.getHeight());
+        //System.out.println("MouseX = " + mouseX);
+        //System.out.println("MouseY = " + mouseY + "\n");
+
+        if (mouseY < viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD8","NUMPAD8",KeyCode.NUMPAD8,false,false,false,false));
+        }
+        if (mouseY > viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD2","NUMPAD2",KeyCode.NUMPAD2,false,false,false,false));
+        }
+        if (mouseX < viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD4","NUMPAD4",KeyCode.NUMPAD4,false,false,false,false));
+        }
+        if (mouseX > viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD6","NUMPAD6",KeyCode.NUMPAD6,false,false,false,false));
+        }
+
+
+    }
+
 }
