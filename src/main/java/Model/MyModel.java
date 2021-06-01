@@ -3,12 +3,14 @@ package Model;
 import Client.Client;
 import Client.IClientStrategy;
 import IO.MyDecompressorInputStream;
+import Server.Configurations;
 import Server.Server;
 import Server.ServerStrategyGenerateMaze;
 import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.Solution;
-import Server.Configurations;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -20,7 +22,7 @@ public class MyModel extends Observable implements IModel{
 
     static public Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
     static public Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
-
+    private final Logger LOG = LogManager.getLogger(); // logger
     private Configurations config = Configurations.getInstance();
     Maze maze;
     int rowMaze;
@@ -100,6 +102,7 @@ public class MyModel extends Observable implements IModel{
         if (rows <2 || cols<2){
             setChanged();
             notifyObservers("ErrorConfig"); // error in arguments
+            LOG.error("User xxx - cannot update config file with row and cols less than 2!");
             return;
         }
         try { // update changes
@@ -109,6 +112,7 @@ public class MyModel extends Observable implements IModel{
             config.setSolverAlgorithm(solverAlg);
             setChanged();
             notifyObservers("SetConfig"); // set Config
+            LOG.info("User xxx - Config file changed.");
         } catch (Exception ignored) {} // cannot raise exception- we handle this.
 
     }
@@ -188,6 +192,7 @@ public class MyModel extends Observable implements IModel{
             setChanged();
             if(checkFinish()) {
                 notifyObservers("Finish");
+                LOG.info("User xxx - Finished the maze!");
             }
             else {
                 notifyObservers("Location"); // finished update location
@@ -237,6 +242,8 @@ public class MyModel extends Observable implements IModel{
 
         setChanged();
         notifyObservers("Generate"); // finished generate maze
+        LOG.info("User xxx -New maze was generated!");
+
     }
 
     public void solveMaze(Maze mazeToSolve) {
@@ -260,6 +267,7 @@ public class MyModel extends Observable implements IModel{
             client.communicateWithServer();
             setChanged();
             notifyObservers("Solve");
+            LOG.info("User xxx - Asked for help. printed solution!");
         } catch (UnknownHostException e) { e.printStackTrace();
         }
     }

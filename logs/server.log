@@ -1,0 +1,5 @@
+2021.06.01 12:46:10.142 INFO  Model.MyModel - User xxx -New maze was generated!
+2021.06.01 12:46:17.499 INFO  Model.MyModel - User xxx - Asked for help. printed solution!
+2021.06.01 12:46:27.254 DEBUG Model.MyModel - User xxx - cannot update config file with row and cols less than 2!
+2021.06.01 12:47:11.972 INFO  Model.MyModel - User xxx -New maze was generated!
+2021.06.01 12:47:18.835 ERROR Model.MyModel - User xxx - cannot update config file with row and cols less than 2!
