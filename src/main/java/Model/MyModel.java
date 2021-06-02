@@ -192,7 +192,11 @@ public class MyModel extends Observable implements IModel{
             setChanged();
             if(checkFinish()) {
                 notifyObservers("Finish");
-                LOG.info("User xxx - Finished the maze!");
+                try {
+                    LOG.info("User "+ InetAddress.getLocalHost().getHostAddress() +" - Finished the maze!");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
             }
             else {
                 notifyObservers("Location"); // finished update location
@@ -242,7 +246,11 @@ public class MyModel extends Observable implements IModel{
 
         setChanged();
         notifyObservers("Generate"); // finished generate maze
-        LOG.info("User xxx -New maze was generated!");
+        try {
+            LOG.info("User "+ InetAddress.getLocalHost().getHostAddress() +" -New maze was generated!");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -267,7 +275,7 @@ public class MyModel extends Observable implements IModel{
             client.communicateWithServer();
             setChanged();
             notifyObservers("Solve");
-            LOG.info("User xxx - Asked for help. printed solution!");
+            LOG.info("User "+ InetAddress.getLocalHost().getHostAddress() +" - Asked for help. printed solution!");
         } catch (UnknownHostException e) { e.printStackTrace();
         }
     }
