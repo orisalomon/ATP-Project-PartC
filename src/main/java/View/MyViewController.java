@@ -455,22 +455,21 @@ public class MyViewController implements IView, Initializable, Observer {
     }
 
     public void mouseDragged(MouseEvent mouseEvent) {
-        /*
-        // get relative x and y of the mazeDisplayer
-        double x = mouseEvent.getX();
-        double y = mouseEvent.getY();
 
-        System.out.println("x: "+x);
-        System.out.println("y: "+y);
-        mazeDisplayer.setPlayerPositionMouse(y,x);
+        double canvasHeight = mazeDisplayer.getHeight(); // canvasHeight
+        double canvasWidth = mazeDisplayer.getWidth();// canvasWidth
 
-        */
+        int rows = maze.getRows();
+        int cols = maze.getCols();
 
-        double mouseX =(int) ((mouseEvent.getX()) / mazeDisplayer.getWidth());
-        double mouseY =(int) ((mouseEvent.getY()) / mazeDisplayer.getHeight());
-        //System.out.println("MouseX = " + mouseX);
-        //System.out.println("MouseY = " + mouseY + "\n");
+        double cellHeight = canvasHeight / rows;
+        double cellWidth = canvasWidth / cols;
 
+        // calculate current mouse position by cells.
+        double mouseX =(int) ((mouseEvent.getX()) / cellWidth);
+        double mouseY =(int) ((mouseEvent.getY()) / cellHeight);
+
+        // UP DOWN LEFT RIGHT
         if (mouseY < viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
             viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD8","NUMPAD8",KeyCode.NUMPAD8,false,false,false,false));
         }
@@ -482,6 +481,20 @@ public class MyViewController implements IView, Initializable, Observer {
         }
         if (mouseX > viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
             viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD6","NUMPAD6",KeyCode.NUMPAD6,false,false,false,false));
+        }
+
+        // diagonals
+        if (mouseY < viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD9","NUMPAD9",KeyCode.NUMPAD9,false,false,false,false));
+        }
+        if (mouseY > viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD3","NUMPAD3",KeyCode.NUMPAD3,false,false,false,false));
+        }
+        if (mouseX < viewModel.getColChar() && mouseY > viewModel.getRowChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD1","NUMPAD1",KeyCode.NUMPAD1,false,false,false,false));
+        }
+        if (mouseX < viewModel.getColChar() && mouseY < viewModel.getRowChar()) {
+            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD7","NUMPAD7",KeyCode.NUMPAD7,false,false,false,false));
         }
 
 
