@@ -16,11 +16,14 @@ public interface IModel {
     void assignObserver(Observer o);
     void start();
     void stop();
-    void updateConfig(int rows, int cols, String generateAlg, String solverAlg);
+    void updateConfig(int threadSize, int rows, int cols, String generateAlg, String solverAlg);
     String getSolverAlg();
     String getGenerateAlg();
     int getRowMaze();
     int getColMaze();
     boolean checkFinish();
 
+    void writeErrorToLog();
+
+    int getThreadsNum();
 }

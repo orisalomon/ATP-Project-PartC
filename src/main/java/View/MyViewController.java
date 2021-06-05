@@ -2,12 +2,12 @@ package View;
 
 import ViewModel.MyViewModel;
 import algorithms.mazeGenerators.Maze;
-import algorithms.search.Solution;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -21,8 +21,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
@@ -44,12 +48,7 @@ public class MyViewController implements IView, Initializable, Observer {
     public Label playerCol;
     public Button music;
     public Pane mazePane;
-    public ToggleButton volume;
-    private Maze maze;
-    public int mazeRow;
-    public int mazeCol;
     public MazeDisplayer mazeDisplayer;
-    private Solution solution;
     private MyViewModel viewModel;
     private Media media; // TODO: the file path should be in fxml ??
     private MediaPlayer mediaPlayer;
@@ -116,20 +115,16 @@ public class MyViewController implements IView, Initializable, Observer {
     }
 
     public void generateMaze(ActionEvent actionEvent) {
-        mazeRow = viewModel.getRowMaze();
-        mazeCol = viewModel.getColMaze();
-        viewModel.GenerateMaze(mazeRow, mazeCol);
-
+        viewModel.GenerateMaze(viewModel.getRowMaze(), viewModel.getColMaze());
     }
 
     public void solveMaze(ActionEvent actionEvent) {
-        viewModel.solveMaze(maze);
+        viewModel.solveMaze(viewModel.getMaze());
     }
 
     public void saveMaze(ActionEvent actionEvent) {
-        //String mazeFileName = "savedMaze.maze";
 
-        if(maze == null){
+        if(viewModel.getMaze() == null){
             Alert alert = new Alert(Alert.AlertType.ERROR,"No maze created!");alert.show();return;}
 
         try{
@@ -145,7 +140,7 @@ public class MyViewController implements IView, Initializable, Observer {
             if (file != null) {
                 try {
                     out = new ObjectOutputStream(new FileOutputStream(file.getAbsolutePath()));
-                    out.writeObject(maze);
+                    out.writeObject(viewModel.getMaze());
                     out.flush();
                     out.close();
                 } catch (IOException ex) {
@@ -180,7 +175,7 @@ public class MyViewController implements IView, Initializable, Observer {
             try {
                 //read maze from file
                 ObjectInputStream inMaze = new ObjectInputStream(new FileInputStream(file.getAbsolutePath()));
-                maze = (Maze) inMaze.readObject();
+                Maze maze = (Maze) inMaze.readObject();
                 inMaze.close();
                 mazeDisplayer.setMaze(maze);
                 mazeDisplayer.draw();
@@ -200,27 +195,30 @@ public class MyViewController implements IView, Initializable, Observer {
 
         Scene scene = new Scene(grid, 450, 450);
 
-        Text sceneTitle = new Text("Properties");
-        grid.add(sceneTitle, 0, 0);
+        // threads
+        Label threadsNum = new Label("Threads Number:");
+        grid.add(threadsNum, 0, 0);
+        TextField userThreads = new TextField();
+        userThreads.setText(String.valueOf(viewModel.getThreadsNum()));
+        grid.add(userThreads, 1, 0);
 
+        // maze rows
         Label rows = new Label("Maze Rows:");
         grid.add(rows, 0, 1);
-
         TextField userRows = new TextField();
         userRows.setText(String.valueOf(viewModel.getRowMaze()));
         grid.add(userRows, 1, 1);
 
+        // maze columns
         Label Columns = new Label("Maze Columns:");
         grid.add(Columns, 0, 2);
-
         TextField userCols = new TextField();
         userCols.setText(String.valueOf(viewModel.getColMaze()));
         grid.add(userCols, 1, 2);
 
+        // maze generation algorithm
         Label generateAlgorithm = new Label("Maze generation algorithm:");
         grid.add(generateAlgorithm, 0,3);
-
-
         ComboBox<String> comboGenerate = new ComboBox<>();
         comboGenerate.getItems().addAll("Empty","Simple","My");
 
@@ -232,15 +230,13 @@ public class MyViewController implements IView, Initializable, Observer {
         } catch (Exception ignored) {
         }
 
-        //comboGenerate.getSelectionModel().select(currGenText);
         comboGenerate.setValue(currGen);
 
         grid.add(comboGenerate, 1,3);
 
-
+        // maze solver algorithm
         Label solverAlgorithm = new Label("Maze solver algorithm:");
         grid.add(solverAlgorithm, 0,4);
-
         ComboBox<String> comboSolver = new ComboBox<>();
         comboSolver.getItems().addAll("BFS","DFS","BEST");
 
@@ -249,12 +245,10 @@ public class MyViewController implements IView, Initializable, Observer {
             currSolver = viewModel.getSolverAlg();
         } catch (Exception e) {
         }
-
-        //comboSolver.getSelectionModel().select(currSolverText);
         comboSolver.setValue(currSolver);
-
         grid.add(comboSolver, 1,4);
 
+        // submit button
         Button submit = new Button();
         submit.setText("Submit");
         Stage stage = new Stage();
@@ -265,10 +259,25 @@ public class MyViewController implements IView, Initializable, Observer {
                 try {
                     int userRowsInt = Integer.parseInt(userRows.getText());
                     int userColsInt = Integer.parseInt(userCols.getText());
-                    viewModel.updateConfig(userRowsInt,userColsInt,comboGenerate.getValue(),comboSolver.getValue());
+                    int userThreadsInt = Integer.parseInt(userThreads.getText());
+
+                    if(userRowsInt < 2 || userColsInt <2){
+                        new Alert(Alert.AlertType.ERROR,"Rows and Cols must be positive integers greater than 2!").show();
+                        viewModel.writeErrorToLog();
+                        return;
+                    }
+
+                    if(userThreadsInt < 1){
+                        new Alert(Alert.AlertType.ERROR,"Threads number must be a positive integer!").show();
+                        viewModel.writeErrorToLog();
+                        return;
+                    }
+
+                    viewModel.updateConfig(userThreadsInt,userRowsInt,userColsInt,comboGenerate.getValue(),comboSolver.getValue());
                     stage.close();
                 } catch (Exception ex) {
-                    new Alert(Alert.AlertType.ERROR,"Rows and Cols must be positive integer!").show();
+                    new Alert(Alert.AlertType.ERROR,"Threads number, rows and cols must have integers only!").show();
+                    viewModel.writeErrorToLog();
                 }
             }});
         grid.add(submit,3,5);
@@ -277,6 +286,60 @@ public class MyViewController implements IView, Initializable, Observer {
         stage.show();
 
     }
+
+    public void setAbout(ActionEvent actionEvent) {
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(0, 25, 25, 25));
+
+        Scene scene = new Scene(grid, 800, 450);
+
+        //Creating a Text object
+        Text text = new Text();
+        Text header = new Text();
+
+        //Setting font to the text
+        header.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.ITALIC, 30));
+        text.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+
+
+        String txtHeader = new String("About");
+        String txt = new String("Hello User,\n" +
+                "Our names are Ori and Dor, and we are 2nd year students for Information Systems Engineering at BGU.\n" +
+                "This game was created at 'Advanced Programming Topics' course.\n" +
+                "The algorithms that we used to generate our mazes are:\n" +
+                "\t1) Empty - clean maze.\n" +
+                "\t2) Simple - random generating walls with a constant solution.\n" +
+                "\t3) My - DFS algorithm implementation for creation of mazes.\n" +
+                "The algorithms that we used to solve out mazes are:\n" +
+                "\t1) BFS algorithm.\n" +
+                "\t2) DFS algorithm.\n" +
+                "\t3) BestFS algorithm.\n" +
+                "Hope you will enjoy!\n" +
+                "Ori and Dor.");
+
+
+        //Setting the text to be added.
+        text.setText(txt);
+        header.setText(txtHeader);
+
+        //Creating a Group object
+        grid.add(header,0,0);
+        grid.add(text,0,1);
+
+        //Setting title to the Stage
+        Stage stage = new Stage();
+        stage.setTitle("About");
+
+        //Adding scene to the stage
+        stage.setScene(scene);
+
+        //Displaying the contents of the stage
+        stage.show();
+    }
+
 
     public void keyPressed(KeyEvent keyEvent) {
         viewModel.updateMove(keyEvent);
@@ -294,10 +357,9 @@ public class MyViewController implements IView, Initializable, Observer {
         if(o instanceof MyViewModel) {
             switch ((String) arg) {
                 case "Generate" -> {
-                    maze = viewModel.getMaze();
-                    mazeDisplayer.setMaze(maze);
+                    mazeDisplayer.setMaze(viewModel.getMaze());
                     mazeDisplayer.setSolved(false);
-                    mazeDisplayer.setPlayerPosition(maze.getStartPosition().getRowIndex(),maze.getStartPosition().getColumnIndex());
+                    mazeDisplayer.setPlayerPosition(viewModel.getMaze().getStartPosition().getRowIndex(),viewModel.getMaze().getStartPosition().getColumnIndex());
                     Solve.setDisable(false);
 
                     // request focus for the game
@@ -310,9 +372,8 @@ public class MyViewController implements IView, Initializable, Observer {
 
                 }
                 case "Solve" -> {
-                    solution = viewModel.getSolution();
                     mazeDisplayer.setSolved(true);
-                    mazeDisplayer.setSolution(solution);
+                    mazeDisplayer.setSolution(viewModel.getSolution());
                     mazeDisplayer.draw();
                     mazeDisplayer.requestFocus();
                 }
@@ -326,23 +387,15 @@ public class MyViewController implements IView, Initializable, Observer {
                     mazeDisplayer.setPlayerPosition(viewModel.getRowChar(), viewModel.getColChar());
 
                 }
-
-                case "ErrorConfig" -> {
-                    Alert alert = new Alert(Alert.AlertType.ERROR,"Rows and cols must be greater than 2!");
-                    alert.setTitle("Error");
-                    alert.show();
-                }
-
                 case "SetConfig" -> {
-                    mazeRow = viewModel.getRowMaze();
-                    mazeCol = viewModel.getColMaze();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION,"Settings changed successfully!");
+                    alert.setTitle("Settings changed");
+                    alert.show();
                 }
                 case "Finish" -> {
                     drawWin();  // draw new stage with win image
 
                 }
-
-
             }
 
         }
@@ -368,7 +421,6 @@ public class MyViewController implements IView, Initializable, Observer {
         stage.setOnCloseRequest(e -> {
             // disable option to quit the window
             e.consume();
-
         });
 
         //Creating an image
@@ -382,13 +434,6 @@ public class MyViewController implements IView, Initializable, Observer {
         //Setting the image view
         ImageView imageView = new ImageView(winImage);
 
-        //Setting the position of the image
-//        imageView.setX(50);
-//        imageView.setY(25);
-
-        //setting the fit height and width of the image view
-//        imageView.setFitHeight(500);
-//        imageView.setFitWidth(600);
 
         //Setting the preserve ratio of the image view
         imageView.setPreserveRatio(true);
@@ -406,14 +451,13 @@ public class MyViewController implements IView, Initializable, Observer {
                     // set background music
                     mediaPlayerWin.stop();
                     mediaPlayer.play();
+                    music.setText("Turn Off Music!");
                     generateMaze(e);
                     stage.close();
-                } catch (Exception ex) {
-                    new Alert(Alert.AlertType.ERROR,"Rows and Cols must be positive integer!").show();
                 }
+                catch (Exception ignored) {}
             }});
 
-        //root.getChildren().add(playAgain); // add button to win scene
 
         Button quit = new Button();
         quit.setText("Quit game");
@@ -459,8 +503,8 @@ public class MyViewController implements IView, Initializable, Observer {
         double canvasHeight = mazeDisplayer.getHeight(); // canvasHeight
         double canvasWidth = mazeDisplayer.getWidth();// canvasWidth
 
-        int rows = maze.getRows();
-        int cols = maze.getCols();
+        int rows = viewModel.getRowMaze();
+        int cols = viewModel.getColMaze();
 
         double cellHeight = canvasHeight / rows;
         double cellWidth = canvasWidth / cols;
@@ -500,4 +544,114 @@ public class MyViewController implements IView, Initializable, Observer {
 
     }
 
+    public void setHelp(ActionEvent actionEvent) {
+
+        // load images
+        //Creating an image
+        Image imageExit = null;
+        Image imageFile = null;
+        Image imageFinish = null;
+        Image imageProperties = null;
+        Image imagePropertiesOptions = null;
+        Image imageSolve = null;
+        Image imageSolvePath = null;
+        Image imageMusic = null;
+        Image imagePlayerPosition = null;
+        try {
+            imageExit = new Image(new FileInputStream("./resources/images/help_ExitGame.jpg"));
+            imageFile = new Image(new FileInputStream("./resources/images/help_FileGame.jpg"));
+            imageFinish = new Image(new FileInputStream("./resources/images/help_FinishGame.jpg"));
+            imageProperties = new Image(new FileInputStream("./resources/images/help_PropGame.jpg"));
+            imagePropertiesOptions = new Image(new FileInputStream("./resources/images/help_PropertiesOptionsGame.jpg"));
+            imageSolve = new Image(new FileInputStream("./resources/images/help_SolveGame.jpg"));
+            imageSolvePath = new Image(new FileInputStream("./resources/images/help_SolvePathGame.jpg"));
+            imageMusic = new Image(new FileInputStream("./resources/images/help_turnOnMusicGame.jpg"));
+            imagePlayerPosition = new Image(new FileInputStream("./resources/images/help_PlayerPositionGame.jpg"));
+        } catch (FileNotFoundException e) {
+            System.out.println("Help images not found!");
+        }
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+
+        //Creating a Text objects
+        Text header = new Text("Help"); // header
+        // all the rest
+        Text textExit = new Text("Here you can exit the game.");
+        Text textFile = new Text("Here you can start new game, load existing game, or save the current game in your computer.");
+        Text textFinish = new Text("That's the goal point for finish the game. GO THERE!");
+        Text textProperties = new Text("Here you can change the game options.");
+        Text textPropertiesOptions = new Text("here is the options that you can change. the text fields must be integers, rows and cols must be greater than 2. ");
+        Text textSolve = new Text("Here you can ask for help to solve the current maze.");
+        Text textSolvePath = new Text("That how the path of the solution will looks like.");
+        Text textMusic = new Text("Here you can turn on/off the background music.");
+        Text playerPosition = new Text("Here you can see the position of the player inside the board.");
+
+
+        //Setting font to the text
+        header.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.ITALIC, 30));
+        textExit.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textFile.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textFinish.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textProperties.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textPropertiesOptions.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textSolve.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textSolvePath.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        textMusic.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+        playerPosition.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, 15));
+
+
+        // add text to the grid.
+        grid.add(textFile,1,0);
+        grid.add(playerPosition,1,1);
+        grid.add(textMusic,1,2);
+        grid.add(textFinish,1,3);
+        grid.add(textSolve,1,4);
+        grid.add(textSolvePath,1,5);
+        grid.add(textProperties,1,6);
+        grid.add(textPropertiesOptions,1,7);
+        grid.add(textExit,1,8);
+        GridPane.setHalignment(textFile, HPos.CENTER);
+        GridPane.setHalignment(playerPosition, HPos.CENTER);
+        GridPane.setHalignment(textMusic, HPos.CENTER);
+        GridPane.setHalignment(textFinish, HPos.CENTER);
+        GridPane.setHalignment(textSolve, HPos.CENTER);
+        GridPane.setHalignment(textSolvePath, HPos.CENTER);
+        GridPane.setHalignment(textProperties, HPos.CENTER);
+        GridPane.setHalignment(textPropertiesOptions, HPos.CENTER);
+        GridPane.setHalignment(textExit, HPos.CENTER);
+
+        // add photos to the grid
+        grid.add(new ImageView(imageFile),0,0);
+        grid.add(new ImageView(imagePlayerPosition),0,1);
+        grid.add(new ImageView(imageMusic),0,2);
+        grid.add(new ImageView(imageFinish),0,3);
+        grid.add(new ImageView(imageSolve),0,4);
+        grid.add(new ImageView(imageSolvePath),0,5);
+        grid.add(new ImageView(imageProperties),0,6);
+        grid.add(new ImageView(imagePropertiesOptions),0,7);
+        grid.add(new ImageView(imageExit),0,8);
+
+
+        grid.setGridLinesVisible(true);
+        Stage stage = new Stage();
+        stage.setTitle("Help");
+
+        VBox box = new VBox();
+        Scene scene = new Scene(box, 1300, 600);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(grid);
+        box.getChildren().addAll(header,scrollPane);
+
+        //Adding scene to the stage
+        stage.setScene(scene);
+
+        //Displaying the contents of the stage
+        stage.show();
+
+    }
 }

@@ -20,8 +20,8 @@ import java.util.Observer;
 
 public class MyModel extends Observable implements IModel{
 
-    static public Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
-    static public Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
+    public Server mazeGeneratingServer = new Server(5400, 1000, new ServerStrategyGenerateMaze());
+    public Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
     private final Logger LOG = LogManager.getLogger(); // logger
     private Configurations config = Configurations.getInstance();
     Maze maze;
@@ -71,6 +71,20 @@ public class MyModel extends Observable implements IModel{
         return rowChar == maze.getGoalPosition().getRowIndex() && colChar == maze.getGoalPosition().getColumnIndex();
     }
 
+    @Override
+    public void writeErrorToLog() {
+        try {
+            LOG.error("User " + InetAddress.getLocalHost().getHostAddress() +" - entered invalid arguments to config file!");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getThreadsNum() {
+        return config.getThreadPoolSize();
+    }
+
     public Solution getSolution() {
         return solution;
     }
@@ -98,21 +112,16 @@ public class MyModel extends Observable implements IModel{
     }
 
     @Override
-    public void updateConfig(int rows, int cols, String generateAlg, String solverAlg) {
-        if (rows <2 || cols<2){
-            setChanged();
-            notifyObservers("ErrorConfig"); // error in arguments
-            LOG.error("User xxx - cannot update config file with row and cols less than 2!");
-            return;
-        }
+    public void updateConfig(int threadSize, int rows, int cols, String generateAlg, String solverAlg) {
         try { // update changes
             rowMaze = rows;
             colMaze = cols;
             config.setGenAlgorithm(generateAlg);
             config.setSolverAlgorithm(solverAlg);
+            config.setThreadPoolSize(threadSize);
             setChanged();
             notifyObservers("SetConfig"); // set Config
-            LOG.info("User xxx - Config file changed.");
+            LOG.info("User " + InetAddress.getLocalHost().getHostAddress() +" - Config file changed.");
         } catch (Exception ignored) {} // cannot raise exception- we handle this.
 
     }
@@ -275,7 +284,7 @@ public class MyModel extends Observable implements IModel{
             client.communicateWithServer();
             setChanged();
             notifyObservers("Solve");
-            LOG.info("User "+ InetAddress.getLocalHost().getHostAddress() +" - Asked for help. printed solution!");
+            LOG.info("User "+ InetAddress.getLocalHost().getHostAddress() +" - Asked for help. Printed solution!");
         } catch (UnknownHostException e) { e.printStackTrace();
         }
     }

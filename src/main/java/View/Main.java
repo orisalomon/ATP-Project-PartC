@@ -11,11 +11,6 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    /*
-    int screenWidth = (int) Screen.getPrimary().getBounds().getWidth();
-    int screenHeight = (int) Screen.getPrimary().getBounds().getHeight();
-    */
-
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("MyView.fxml"));
@@ -28,7 +23,7 @@ public class Main extends Application {
 
         IModel model = new MyModel();
         MyViewModel viewModel = new MyViewModel(model);
-        viewModel.start();
+        model.start();
         MyViewController view = fxmlLoader.getController();
         view.setViewModel(viewModel);
         viewModel.addObserver(view);

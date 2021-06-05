@@ -11,106 +11,50 @@ import java.util.Observer;
 public class MyViewModel extends Observable implements Observer {
 
     IModel model;
-    int rowChar;
-    int colChar;
-    Maze maze;
-    int rowMaze;
-    int colMaze;
-    String genAlg;
-    String solverAlg;
-    Solution solution;
-
 
     public MyViewModel(IModel model) {
         this.model = model;
         this.model.assignObserver(this);
-        maze = null;
-        rowChar = 0;
-        colChar = 0;
-        solution = null;
-
-        // get data from model + initial data
-        rowMaze=model.getRowMaze();
-        colMaze=model.getColMaze();
-        genAlg = model.getGenerateAlg();
-        solverAlg = model.getSolverAlg();
-
-
     }
 
     public int getRowMaze() {
-        return rowMaze;
+        return model.getRowMaze();
     }
 
     public int getColMaze() {
-        return colMaze;
+        return model.getColMaze();
     }
 
     public String getGenAlg() {
-        return genAlg;
+        return model.getGenerateAlg();
     }
 
     public String getSolverAlg() {
-        return solverAlg;
+        return model.getSolverAlg();
     }
 
     public int getRowChar() {
-        return rowChar;
+        return model.getRowChar();
     }
 
     public int getColChar() {
-        return colChar;
+        return model.getColChar();
     }
 
     public Maze getMaze() {
-        return maze;
+        return model.getMaze();
     }
 
     public Solution getSolution() {
-        return solution;
+        return model.getSolution();
     }
 
     @Override
     public void update(Observable o, Object arg) {
 
         if(o instanceof IModel) {
-            switch ((String) arg) {
-                case "Generate" -> {
-                    maze = model.getMaze();
-                    rowChar = model.getRowChar();
-                    colChar = model.getColChar();
-                    setChanged();
-                    notifyObservers("Generate");
-                }
-                case "Solve" -> {
-                    solution = model.getSolution();
-                    setChanged();
-                    notifyObservers("Solve");
-                }
-                case "Location" -> {
-                    rowChar = model.getRowChar();
-                    colChar = model.getColChar();
-                    setChanged();
-                    notifyObservers("Location");
-                }
-                case "ErrorConfig" -> {
-                    setChanged();
-                    notifyObservers("ErrorConfig");
-                }
-                case "SetConfig" -> {
-                    rowMaze = model.getRowMaze();
-                    colMaze = model.getColMaze();
-                    genAlg = model.getGenerateAlg();
-                    solverAlg = model.getSolverAlg();
-                    setChanged();
-                    notifyObservers("SetConfig");
-                }
-                case "Finish" -> {
-                    setChanged();
-                    notifyObservers("Finish");
-                }
-            }
-
+            setChanged();
+            notifyObservers(arg);
         }
     }
 
@@ -146,7 +90,15 @@ public class MyViewModel extends Observable implements Observer {
         model.start();
     }
 
-    public void updateConfig(int rows, int cols, String generateAlg, String solverAlg) {
-        model.updateConfig(rows,cols,generateAlg,solverAlg);
+    public void updateConfig(int threadSize, int rows, int cols, String generateAlg, String solverAlg) {
+        model.updateConfig(threadSize,rows,cols,generateAlg,solverAlg);
+    }
+
+    public void writeErrorToLog() {
+        model.writeErrorToLog();
+    }
+
+    public int getThreadsNum() {
+        return model.getThreadsNum();
     }
 }

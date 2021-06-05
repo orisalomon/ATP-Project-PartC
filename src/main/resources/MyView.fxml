@@ -59,9 +59,11 @@
                                 <MenuItem fx:id="Exit" mnemonicParsing="false" onAction="#exitMaze" text="Exit" />
                             </items>
                         </Menu>
-                        <Menu fx:id="Help" mnemonicParsing="false" text="Help">
+                        <Menu fx:id="HelpMenu" mnemonicParsing="false" text="Help">
+                            <MenuItem fx:id="Help" onAction="#setHelp" mnemonicParsing="false" text="Help" />
                         </Menu>
-                        <Menu fx:id="About" mnemonicParsing="false" text="About">
+                        <Menu fx:id="AboutMenu" mnemonicParsing="false" text="About">
+                            <MenuItem fx:id="About" onAction="#setAbout" mnemonicParsing="false" text="About" />
                         </Menu>
                     </menus>
                 </MenuBar>
