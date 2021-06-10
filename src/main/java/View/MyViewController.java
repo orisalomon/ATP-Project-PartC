@@ -290,9 +290,9 @@ public class MyViewController implements IView, Initializable, Observer {
     public void setAbout(ActionEvent actionEvent) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(0, 25, 25, 25));
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(25, 25, 25, 25));
 
         Scene scene = new Scene(grid, 800, 450);
 

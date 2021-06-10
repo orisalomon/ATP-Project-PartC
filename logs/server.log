@@ -40,3 +40,44 @@
 2021.06.05 12:50:29.303 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
 2021.06.05 13:22:22.287 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
 2021.06.05 13:22:43.103 INFO  Model.MyModel - User 192.168.253.1 - Asked for help. Printed solution!
+2021.06.06 12:35:59.986 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.06 12:36:27.159 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
+2021.06.06 12:36:35.098 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.06 12:37:02.719 ERROR Model.MyModel - User 192.168.253.1 - entered invalid arguments to config file!
+2021.06.06 12:42:53.111 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:00:54.190 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:02:01.735 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
+2021.06.10 11:02:12.268 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:02:14.836 INFO  Model.MyModel - User 192.168.253.1 - Asked for help. Printed solution!
+2021.06.10 11:02:53.308 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:03:12.663 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:05:35.807 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:05:55.503 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:06:47.200 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:33:51.905 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:34:01.105 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:34:17.896 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 11:34:32.677 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 11:34:38.551 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:13:34.055 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:13:45.937 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:14:39.380 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:15:02.572 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:18:00.342 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:18:11.653 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:33:20.822 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:33:25.557 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:33:40.998 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:33:43.730 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:45:10.634 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:45:59.788 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:48:24.631 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:48:57.593 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:50:02.656 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:51:57.833 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:52:02.709 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:52:11.398 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.10 12:52:14.790 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:52:18.703 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
+2021.06.10 12:52:59.817 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 12:56:30.761 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
