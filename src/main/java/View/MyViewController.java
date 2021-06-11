@@ -499,48 +499,48 @@ public class MyViewController implements IView, Initializable, Observer {
     }
 
     public void mouseDragged(MouseEvent mouseEvent) {
+        if (viewModel.getMaze() != null) {
+            double canvasHeight = mazeDisplayer.getHeight(); // canvasHeight
+            double canvasWidth = mazeDisplayer.getWidth();// canvasWidth
 
-        double canvasHeight = mazeDisplayer.getHeight(); // canvasHeight
-        double canvasWidth = mazeDisplayer.getWidth();// canvasWidth
+            int rows = viewModel.getRowMaze();
+            int cols = viewModel.getColMaze();
 
-        int rows = viewModel.getRowMaze();
-        int cols = viewModel.getColMaze();
+            double cellHeight = canvasHeight / rows;
+            double cellWidth = canvasWidth / cols;
 
-        double cellHeight = canvasHeight / rows;
-        double cellWidth = canvasWidth / cols;
+            // calculate current mouse position by cells.
+            double mouseX = (int) ((mouseEvent.getX()) / cellWidth);
+            double mouseY = (int) ((mouseEvent.getY()) / cellHeight);
 
-        // calculate current mouse position by cells.
-        double mouseX =(int) ((mouseEvent.getX()) / cellWidth);
-        double mouseY =(int) ((mouseEvent.getY()) / cellHeight);
+            // UP DOWN LEFT RIGHT
+            if (mouseY < viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD8", "NUMPAD8", KeyCode.NUMPAD8, false, false, false, false));
+            }
+            if (mouseY > viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD2", "NUMPAD2", KeyCode.NUMPAD2, false, false, false, false));
+            }
+            if (mouseX < viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD4", "NUMPAD4", KeyCode.NUMPAD4, false, false, false, false));
+            }
+            if (mouseX > viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD6", "NUMPAD6", KeyCode.NUMPAD6, false, false, false, false));
+            }
 
-        // UP DOWN LEFT RIGHT
-        if (mouseY < viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD8","NUMPAD8",KeyCode.NUMPAD8,false,false,false,false));
+            // diagonals
+            if (mouseY < viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD9", "NUMPAD9", KeyCode.NUMPAD9, false, false, false, false));
+            }
+            if (mouseY > viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD3", "NUMPAD3", KeyCode.NUMPAD3, false, false, false, false));
+            }
+            if (mouseX < viewModel.getColChar() && mouseY > viewModel.getRowChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD1", "NUMPAD1", KeyCode.NUMPAD1, false, false, false, false));
+            }
+            if (mouseX < viewModel.getColChar() && mouseY < viewModel.getRowChar()) {
+                viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED, "NUMPAD7", "NUMPAD7", KeyCode.NUMPAD7, false, false, false, false));
+            }
         }
-        if (mouseY > viewModel.getRowChar() && mouseX == viewModel.getColChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD2","NUMPAD2",KeyCode.NUMPAD2,false,false,false,false));
-        }
-        if (mouseX < viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD4","NUMPAD4",KeyCode.NUMPAD4,false,false,false,false));
-        }
-        if (mouseX > viewModel.getColChar() && mouseY == viewModel.getRowChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD6","NUMPAD6",KeyCode.NUMPAD6,false,false,false,false));
-        }
-
-        // diagonals
-        if (mouseY < viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD9","NUMPAD9",KeyCode.NUMPAD9,false,false,false,false));
-        }
-        if (mouseY > viewModel.getRowChar() && mouseX > viewModel.getColChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD3","NUMPAD3",KeyCode.NUMPAD3,false,false,false,false));
-        }
-        if (mouseX < viewModel.getColChar() && mouseY > viewModel.getRowChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD1","NUMPAD1",KeyCode.NUMPAD1,false,false,false,false));
-        }
-        if (mouseX < viewModel.getColChar() && mouseY < viewModel.getRowChar()) {
-            viewModel.updateMove(new KeyEvent(KeyEvent.KEY_PRESSED,"NUMPAD7","NUMPAD7",KeyCode.NUMPAD7,false,false,false,false));
-        }
-
 
     }
 

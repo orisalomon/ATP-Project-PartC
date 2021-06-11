@@ -81,3 +81,16 @@
 2021.06.10 12:52:18.703 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
 2021.06.10 12:52:59.817 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
 2021.06.10 12:56:30.761 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.10 13:14:39.841 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:39:07.375 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:39:24.783 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:39:37.207 INFO  Model.MyModel - User 192.168.253.1 - Asked for help. Printed solution!
+2021.06.11 10:39:59.494 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
+2021.06.11 10:40:11.043 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:41:34.289 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:44:06.764 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:44:46.775 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
+2021.06.11 10:45:27.234 INFO  Model.MyModel - User 192.168.253.1 - Config file changed.
+2021.06.11 10:45:32.565 INFO  Model.MyModel - User 192.168.253.1 - Asked for help. Printed solution!
+2021.06.11 10:46:01.529 INFO  Model.MyModel - User 192.168.253.1 - Finished the maze!
+2021.06.11 10:46:08.931 INFO  Model.MyModel - User 192.168.253.1 -New maze was generated!
