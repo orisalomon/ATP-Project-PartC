@@ -84,7 +84,7 @@ public class MyViewController implements IView, Initializable, Observer {
         mazeDisplayer.widthProperty().bind(mazePane.widthProperty()); // for resizeable maze
         mazeDisplayer.heightProperty().bind(mazePane.heightProperty());
 
-        media = new Media(new File("resources/music/gameMusic.mp3").toURI().toString());
+        media = new Media(getClass().getResource("/music/gameMusic.mp3").toExternalForm());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setVolume(0.2);
@@ -404,7 +404,7 @@ public class MyViewController implements IView, Initializable, Observer {
     public void drawWin(){
 
         // change music
-        Media winMedia = new Media(new File("resources/music/winSong.mp3").toURI().toString());
+        Media winMedia = new Media(getClass().getResource("/music/winSong.mp3").toExternalForm());
         MediaPlayer mediaPlayerWin = new MediaPlayer(winMedia);
         mediaPlayer.pause(); // stop current music
         mediaPlayerWin.setAutoPlay(true);
@@ -425,11 +425,7 @@ public class MyViewController implements IView, Initializable, Observer {
 
         //Creating an image
         Image winImage = null;
-        try {
-            winImage = new Image(new FileInputStream(mazeDisplayer.getImageFileNameWin()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No win image found!");
-        }
+        winImage = new Image(getClass().getResource(mazeDisplayer.getImageFileNameWin()).toExternalForm());
 
         //Setting the image view
         ImageView imageView = new ImageView(winImage);
@@ -557,19 +553,16 @@ public class MyViewController implements IView, Initializable, Observer {
         Image imageSolvePath = null;
         Image imageMusic = null;
         Image imagePlayerPosition = null;
-        try {
-            imageExit = new Image(new FileInputStream("./resources/images/help_ExitGame.jpg"));
-            imageFile = new Image(new FileInputStream("./resources/images/help_FileGame.jpg"));
-            imageFinish = new Image(new FileInputStream("./resources/images/help_FinishGame.jpg"));
-            imageProperties = new Image(new FileInputStream("./resources/images/help_PropGame.jpg"));
-            imagePropertiesOptions = new Image(new FileInputStream("./resources/images/help_PropertiesOptionsGame.jpg"));
-            imageSolve = new Image(new FileInputStream("./resources/images/help_SolveGame.jpg"));
-            imageSolvePath = new Image(new FileInputStream("./resources/images/help_SolvePathGame.jpg"));
-            imageMusic = new Image(new FileInputStream("./resources/images/help_turnOnMusicGame.jpg"));
-            imagePlayerPosition = new Image(new FileInputStream("./resources/images/help_PlayerPositionGame.jpg"));
-        } catch (FileNotFoundException e) {
-            System.out.println("Help images not found!");
-        }
+
+        imageExit = new Image(getClass().getResource("/images/help_ExitGame.jpg").toExternalForm());
+        imageFile = new Image(getClass().getResource("/images/help_FileGame.jpg").toExternalForm());
+        imageFinish = new Image(getClass().getResource("/images/help_FinishGame.jpg").toExternalForm());
+        imageProperties = new Image(getClass().getResource("/images/help_PropGame.jpg").toExternalForm());
+        imagePropertiesOptions = new Image(getClass().getResource("/images/help_PropertiesOptionsGame.jpg").toExternalForm());
+        imageSolve = new Image(getClass().getResource("/images/help_SolveGame.jpg").toExternalForm());
+        imageSolvePath = new Image(getClass().getResource("/images/help_SolvePathGame.jpg").toExternalForm());
+        imageMusic = new Image(getClass().getResource("/images/help_turnOnMusicGame.jpg").toExternalForm());
+        imagePlayerPosition = new Image(getClass().getResource("/images/help_PlayerPositionGame.jpg").toExternalForm());
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

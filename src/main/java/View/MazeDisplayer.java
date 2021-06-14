@@ -11,9 +11,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 public class MazeDisplayer extends Canvas {
 
     // members for FXML
@@ -191,20 +188,17 @@ public class MazeDisplayer extends Canvas {
 
     private void drawPlayer(GraphicsContext graphicsContext, double cellWidth, double cellHeight, String side) {
 
-        FileInputStream charSide = null;
+        String charSide = null;
         Image playerImage = null;
-        try {
-            switch (side) {
-                case "front" -> charSide = new FileInputStream(getImageFileNameCharFront());
-                case "back" -> charSide = new FileInputStream(getImageFileNameCharBack());
-                case "left" -> charSide = new FileInputStream(getImageFileNameCharLeft());
-                case "right" -> charSide = new FileInputStream(getImageFileNameCharRight());
-            }
-            if (charSide != null) {
-                playerImage = new Image(charSide);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("No player image found!");
+        switch (side) {
+
+            case "front" -> charSide = getClass().getResource(getImageFileNameCharFront()).toExternalForm();
+            case "back" -> charSide = getClass().getResource(getImageFileNameCharBack()).toExternalForm();
+            case "left" -> charSide = getClass().getResource(getImageFileNameCharLeft()).toExternalForm();
+            case "right" -> charSide = getClass().getResource(getImageFileNameCharRight()).toExternalForm();
+        }
+        if (charSide != null) {
+            playerImage = new Image(charSide);
         }
 
         double x = getPlayerCol()*cellWidth;
@@ -221,11 +215,8 @@ public class MazeDisplayer extends Canvas {
 
     private void drawFinish(GraphicsContext graphicsContext, double cellWidth, double cellHeight) {
         Image finishImage = null;
-        try {
-            finishImage = new Image(new FileInputStream(getImageFileNameFinish()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No finish image found!");
-        }
+
+        finishImage = new Image(getClass().getResource(getImageFileNameFinish()).toExternalForm());
 
         if(finishImage != null)
         {
@@ -238,18 +229,12 @@ public class MazeDisplayer extends Canvas {
     private void drawFloorAndWalls(GraphicsContext graphicsContext, int rows, int cols, double cellWidth, double cellHeight) {
 
         Image treeImage = null;
-        try {
-            treeImage = new Image(new FileInputStream(getImageFileNameWall()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No wall image found!");
-        }
+
+        treeImage = new Image(getClass().getResource(getImageFileNameWall()).toExternalForm());
 
         Image pathImage = null;
-        try {
-            pathImage = new Image(new FileInputStream(getImageFileNameCharPath()));
-        } catch (FileNotFoundException e) {
-            System.out.println("No path image found!");
-        }
+
+        pathImage = new Image(getClass().getResource(getImageFileNameCharPath()).toExternalForm());
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -281,11 +266,8 @@ public class MazeDisplayer extends Canvas {
         if(maze != null){
 
             Image solutionImage = null;
-            try {
-                solutionImage = new Image(new FileInputStream(getImageFileNameSolution()));
-            } catch (FileNotFoundException e) {
-                System.out.println("No solution image found!");
-            }
+
+            solutionImage = new Image(getClass().getResource(getImageFileNameSolution()).toExternalForm());
 
             double canvasHeight = getHeight();
             double canvasWidth = getWidth();

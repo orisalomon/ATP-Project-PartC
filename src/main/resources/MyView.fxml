@@ -73,7 +73,7 @@
     <center>
         <Pane fx:id="mazePane" BorderPane.alignment="CENTER">
             <children>
-                <MazeDisplayer fx:id="mazeDisplayer" onScroll="#mouseScrolled" onMouseDragged="#mouseDragged" imageFileNameCharBack="resources/images/back.jpg" imageFileNameCharFront="resources/images/front.jpg" imageFileNameCharLeft="resources/images/left.jpg" imageFileNameCharPath="resources/images/path.jpg" imageFileNameCharRight="resources/images/right.jpg" imageFileNameFinish="resources/images/ball.jpg" imageFileNameSolution="resources/images/sol.jpg" imageFileNameWall="resources/images/tree.jpg" imageFileNameWin="resources/images/win.jpg" onKeyPressed="#keyPressed" />
+                <MazeDisplayer fx:id="mazeDisplayer" onScroll="#mouseScrolled" onMouseDragged="#mouseDragged" imageFileNameCharBack="/images/back.jpg" imageFileNameCharFront="/images/front.jpg" imageFileNameCharLeft="/images/left.jpg" imageFileNameCharPath="/images/path.jpg" imageFileNameCharRight="/images/right.jpg" imageFileNameFinish="/images/ball.jpg" imageFileNameSolution="/images/sol.jpg" imageFileNameWall="/images/tree.jpg" imageFileNameWin="/images/win.jpg" onKeyPressed="#keyPressed" />
             </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
